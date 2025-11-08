@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axis VoiceSeal — Frontend Prototype</title>
+    <style>
+        :root {
+            --axis-red: #A80534;
+            --axis-red-light: #e8a8ba;
+            --axis-red-dark: #870429;
+            --verified-green: #28a745;
+            --fraud-red: #dc3545;
+            --unknown-amber: #ffc107;
+            --text-dark: #333;
+            --text-light: #6c757d;
+            --bg-light: #f8f9fa;
+            --border-color: #dee2e6;
+            --shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            --shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            --border-radius: 0.375rem;
+            --border-radius-lg: 0.5rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: white;
+            box-shadow: var(--shadow);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--axis-red);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .nav-link.active {
+            color: var(--axis-red);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--axis-red);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem 0;
+        }
+
+        .section {
+            background-color: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--axis-red);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            font-size: 1.25rem;
+        }
+
+        /* Card Layout */
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--axis-red);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--axis-red-light);
+            box-shadow: 0 0 0 0.2rem rgba(168, 5, 52, 0.25);
+        }
+
+        .btn {
+            display: inline-block;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.15s ease-in-out;
+        }
+
+        .btn-primary {
+            background-color: var(--axis-red);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--axis-red-dark);
+        }
+
+        .btn-success {
+            background-color: var(--verified-green);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--fraud-red);
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: var(--unknown-amber);
+            color: var(--text-dark);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border-color: var(--border-color);
+            color: var(--text-dark);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--bg-light);
+        }
+
+        /* Verification Widget */
+        .verification-widget {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .verification-result {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            display: none;
+        }
+
+        .result-verified {
+            background-color: rgba(40, 167, 69, 0.1);
+            border-left: 4px solid var(--verified-green);
+        }
+
+        .result-fraud {
+            background-color: rgba(220, 53, 69, 0.1);
+            border-left: 4px solid var(--fraud-red);
+        }
+
+        .result-unknown {
+            background-color: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid var(--unknown-amber);
+        }
+
+        .result-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .copy-message {
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        /* Report Form */
+        .file-preview {
+            margin-top: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .preview-item {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .preview-item img, .preview-item audio {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .remove-file {
+            position: absolute;
+            top: 0.25rem;
+            right: 0.25rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* Admin Dashboard */
+        .admin-toggle {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .admin-panel {
+            display: none;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th, .data-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table th {
+            background-color: var(--bg-light);
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background-color: var(--unknown-amber);
+            color: var(--text-dark);
+        }
+
+        .status-under-review {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .status-reported {
+            background-color: #6f42c1;
+            color: white;
+        }
+
+        .status-resolved {
+            background-color: var(--verified-green);
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--axis-red);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        /* Security Notice */
+        .security-notice {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .security-icon {
+            color: #856404;
+            font-size: 1.25rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .section {
+                padding: 1rem;
+            }
+
+            .stats-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Icons (using Unicode) */
+        .icon {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <div class="logo">
+                    <div class="logo-text">Axis VoiceSeal — Demo</div>
+                </div>
+                <div class="nav-links">
+                    <div class="nav-link active" data-section="verification">Number Verification</div>
+                    <div class="nav-link" data-section="report">Report Fraud</div>
+                    <div class="nav-link" data-section="admin">Admin Dashboard</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Security Notice -->
+    <div class="container">
+        <div class="security-notice">
+            <div class="security-icon">⚠️</div>
+            <div>
+                <strong>Security & Privacy Notice:</strong> This is a frontend-only demo prototype. No real data is transmitted to external servers. All files and reports stay in your browser's localStorage unless you click "Simulate Send".
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="main-content">
+            <!-- Verification Widget -->
+            <section id="verification-section" class="section active-section">
+                <h2 class="section-title">
+                    <span class="icon">🔍</span> Number Verification
+                </h2>
+                <div class="card">
+                    <p>Enter a 10-12 digit phone number to verify if it's an official Axis Bank number or reported as fraudulent.</p>
+                    
+                    <div class="verification-widget">
+                        <div class="form-group">
+                            <label for="phone-input" class="form-label">Phone Number</label>
+                            <input type="text" id="phone-input" class="form-control" placeholder="Enter 10-12 digit phone number" maxlength="12">
+                        </div>
+                        <button id="verify-btn" class="btn btn-primary">Verify Number</button>
+                        
+                        <div id="verification-result" class="verification-result">
+                            <!-- Results will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="card-title">Test Cases</h3>
+                    <p>Try these numbers to test the system:</p>
+                    <div class="test-cases">
+                        <button class="btn btn-outline test-case" data-number="18604195555">Verified: 18604195555</button>
+                        <button class="btn btn-outline test-case" data-number="18605005555">Verified: 18605005555</button>
+                        <button class="btn btn-outline test-case" data-number="9594264769">Fraud: 9594264769</button>
+                        <button class="btn btn-outline test-case" data-number="9876543210">Fraud: 9876543210</button>
+                        <button class="btn btn-outline test-case" data-number="1234567890">Unknown: 1234567890</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Report Form -->
+            <section id="report-section" class="section">
+                <h2 class="section-title">
+                    <span class="icon">📝</span> Report Suspicious Call
+                </h2>
+                <div class="card">
+                    <form id="report-form">
+                        <div class="form-group">
+                            <label for="report-phone" class="form-label">Phone Number *</label>
+                            <input type="text" id="report-phone" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="call-datetime" class="form-label">Call Date & Time *</label>
+                            <input type="datetime-local" id="call-datetime" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="caller-name" class="form-label">Caller Name (if known)</label>
+                            <input type="text" id="caller-name" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="call-recording" class="form-label">Call Recording (optional)</label>
+                            <input type="file" id="call-recording" class="form-control" accept="audio/*">
+                            <div id="recording-preview" class="file-preview"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="screenshot" class="form-label">Screenshot (optional)</label>
+                            <input type="file" id="screenshot" class="form-control" accept="image/*">
+                            <div id="screenshot-preview" class="file-preview"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description" class="form-label">Detailed Description *</label>
+                            <textarea id="description" class="form-control" rows="4" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" id="consent-checkbox" class="form-check-input" checked>
+                                <label for="consent-checkbox" class="form-check-label">I consent to share this report with Axis Bank Fraud Desk and Local Cyber Crime Cell</label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Submit Report</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Admin Dashboard -->
+            <section id="admin-section" class="section">
+                <h2 class="section-title">
+                    <span class="icon">🛡️</span> Admin Dashboard
+                </h2>
+                
+                <div class="admin-toggle">
+                    <button id="admin-login-btn" class="btn btn-outline">Enter Admin Mode</button>
+                </div>
+                
+                <div id="admin-panel" class="admin-panel">
+                    <div class="stats-cards">
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-reports">0</div>
+                            <div class="stat-label">Total Reports</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="fraud-numbers">2</div>
+                            <div class="stat-label">Fraud Numbers</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="verified-numbers">2</div>
+                            <div class="stat-label">Verified Numbers</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="pending-reports">0</div>
+                            <div class="stat-label">Pending Reports</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3 class="card-title">Manage Reports</h3>
+                        
+                        <div class="form-group">
+                            <div class="filters">
+                                <input type="text" id="filter-phone" class="form-control" placeholder="Filter by phone number">
+                                <input type="date" id="filter-date-from" class="form-control" placeholder="From date">
+                                <input type="date" id="filter-date-to" class="form-control" placeholder="To date">
+                                <select id="filter-status" class="form-control">
+                                    <option value="">All Statuses</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="under-review">Under Review</option>
+                                    <option value="reported">Reported to Police</option>
+                                    <option value="resolved">Resolved</option>
+                                </select>
+                                <button id="apply-filters" class="btn btn-primary">Apply Filters</button>
+                                <button id="clear-filters" class="btn btn-outline">Clear</button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Phone Number</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reports-table-body">
+                                    <!-- Reports will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3 class="card-title">Manage Numbers Database</h3>
+                        
+                        <div class="form-group">
+                            <label for="new-number" class="form-label">Add/Update Number</label>
+                            <input type="text" id="new-number" class="form-control" placeholder="Enter phone number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Number Type</label>
+                            <div>
+                                <input type="radio" id="type-verified" name="number-type" value="verified" checked>
+                                <label for="type-verified">Verified</label>
+                                
+                                <input type="radio" id="type-fraud" name="number-type" value="fraud">
+                                <label for="type-fraud">Fraud</label>
+                            </div>
+                        </div>
+                        
+                        <button id="add-number-btn" class="btn btn-primary">Add/Update Number</button>
+                        
+                        <div class="table-container" style="margin-top: 1.5rem;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Phone Number</th>
+                                        <th>Type</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="numbers-table-body">
+                                    <!-- Numbers will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="evidence-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Evidence Pack</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="evidence-content">
+                    <!-- Evidence content will be inserted here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="download-evidence" class="btn btn-primary">Download Evidence Pack</button>
+                <button id="send-bank-alert" class="btn btn-success">Send to Bank Fraud Desk</button>
+                <button id="send-cyber-alert" class="btn btn-primary">Send to Cyber Crime Cell</button>
+                <button class="btn btn-outline close-modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="bank-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Send Alert to Bank Fraud Desk</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">To:</label>
+                    <input type="text" class="form-control" value="fraud.reporting@axisbank-demo.com" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Subject:</label>
+                    <input type="text" class="form-control" value="VoiceSeal Fraud Alert - Suspicious Call Report" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Body:</label>
+                    <textarea class="form-control" rows="10" readonly>Dear Axis Bank Fraud Desk,
+
+A suspicious call has been reported through our VoiceSeal system. Please find the details below:
+
+[Report details would be attached]
+
+We request your immediate attention to this matter.
+
+Regards,
+VoiceSeal System</textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="simulate-send-bank" class="btn btn-success">Simulate Send</button>
+                <button class="btn btn-outline close-modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cyber-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Send Alert to Cyber Crime Cell</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">To:</label>
+                    <input type="text" class="form-control" value="cybercell@local-demo.gov.in" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Subject:</label>
+                    <input type="text" class="form-control" value="VoiceSeal Cyber Crime Alert - Fraudulent Call Report" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Body:</label>
+                    <textarea class="form-control" rows="10" readonly>Dear Cyber Crime Cell,
+
+We are reporting a fraudulent call attempt that was flagged through our VoiceSeal system. Details are as follows:
+
+[Report details would be attached]
+
+We request your investigation into this matter.
+
+Regards,
+VoiceSeal System</textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="simulate-send-cyber" class="btn btn-success">Simulate Send</button>
+                <button class="btn btn-outline close-modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-login-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Admin Login</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="admin-password" class="form-label">Enter Admin Password</label>
+                    <input type="password" id="admin-password" class="form-control" placeholder="Password">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="submit-admin-login" class="btn btn-primary">Login</button>
+                <button class="btn btn-outline close-modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // In-memory data
+        const verifiedNumbers = ["18604195555", "18605005555"];
+        const knownFraudNumbers = ["9594264769", "9876543210"];
+        
+        // Initialize localStorage if not present
+        function initializeData() {
+            if (!localStorage.getItem('voiceSeal_reports')) {
+                localStorage.setItem('voiceSeal_reports', JSON.stringify([]));
+            }
+            
+            if (!localStorage.getItem('voiceSeal_numbers')) {
+                const numbers = {
+                    verified: [...verifiedNumbers],
+                    fraud: [...knownFraudNumbers]
+                };
+                localStorage.setItem('voiceSeal_numbers', JSON.stringify(numbers));
+            }
+        }
+        
+        // DOM elements
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.section');
+        const verificationSection = document.getElementById('verification-section');
+        const reportSection = document.getElementById('report-section');
+        const adminSection = document.getElementById('admin-section');
+        const adminPanel = document.getElementById('admin-panel');
+        const adminLoginBtn = document.getElementById('admin-login-btn');
+        const adminLoginModal = document.getElementById('admin-login-modal');
+        const submitAdminLogin = document.getElementById('submit-admin-login');
+        const adminPassword = document.getElementById('admin-password');
+        const verifyBtn = document.getElementById('verify-btn');
+        const phoneInput = document.getElementById('phone-input');
+        const verificationResult = document.getElementById('verification-result');
+        const testCases = document.querySelectorAll('.test-case');
+        const reportForm = document.getElementById('report-form');
+        const callRecording = document.getElementById('call-recording');
+        const screenshot = document.getElementById('screenshot');
+        const recordingPreview = document.getElementById('recording-preview');
+        const screenshotPreview = document.getElementById('screenshot-preview');
+        const evidenceModal = document.getElementById('evidence-modal');
+        const bankModal = document.getElementById('bank-modal');
+        const cyberModal = document.getElementById('cyber-modal');
+        const downloadEvidence = document.getElementById('download-evidence');
+        const sendBankAlert = document.getElementById('send-bank-alert');
+        const sendCyberAlert = document.getElementById('send-cyber-alert');
+        const simulateSendBank = document.getElementById('simulate-send-bank');
+        const simulateSendCyber = document.getElementById('simulate-send-cyber');
+        const closeModals = document.querySelectorAll('.close-modal');
+        const evidenceContent = document.getElementById('evidence-content');
+        const totalReports = document.getElementById('total-reports');
+        const fraudNumbers = document.getElementById('fraud-numbers');
+        const verifiedNumbersCount = document.getElementById('verified-numbers');
+        const pendingReports = document.getElementById('pending-reports');
+        const reportsTableBody = document.getElementById('reports-table-body');
+        const numbersTableBody = document.getElementById('numbers-table-body');
+        const applyFilters = document.getElementById('apply-filters');
+        const clearFilters = document.getElementById('clear-filters');
+        const filterPhone = document.getElementById('filter-phone');
+        const filterDateFrom = document.getElementById('filter-date-from');
+        const filterDateTo = document.getElementById('filter-date-to');
+        const filterStatus = document.getElementById('filter-status');
+        const newNumber = document.getElementById('new-number');
+        const addNumberBtn = document.getElementById('add-number-btn');
+        
+        // Current state
+        let currentReportId = null;
+        let currentEvidence = null;
+        
+        // Initialize the application
+        function init() {
+            initializeData();
+            setupEventListeners();
+            updateStats();
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            // Navigation
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    const section = link.getAttribute('data-section');
+                    switchSection(section);
+                });
+            });
+            
+            // Admin login
+            adminLoginBtn.addEventListener('click', () => {
+                adminLoginModal.style.display = 'flex';
+            });
+            
+            submitAdminLogin.addEventListener('click', () => {
+                if (adminPassword.value === 'demoAdmin123') {
+                    adminPanel.style.display = 'block';
+                    adminLoginBtn.textContent = 'Exit Admin Mode';
+                    adminLoginModal.style.display = 'none';
+                    adminPassword.value = '';
+                    updateAdminTables();
+                } else {
+                    alert('Incorrect password. Try "demoAdmin123"');
+                }
+            });
+            
+            // Verification
+            verifyBtn.addEventListener('click', verifyNumber);
+            
+            testCases.forEach(testCase => {
+                testCase.addEventListener('click', () => {
+                    const number = testCase.getAttribute('data-number');
+                    phoneInput.value = number;
+                    verifyNumber();
+                });
+            });
+            
+            // Report form
+            reportForm.addEventListener('submit', submitReport);
+            
+            callRecording.addEventListener('change', handleFileUpload);
+            screenshot.addEventListener('change', handleFileUpload);
+            
+            // Modals
+            closeModals.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.modal').forEach(modal => {
+                        modal.style.display = 'none';
+                    });
+                });
+            });
+            
+            downloadEvidence.addEventListener('click', downloadEvidencePack);
+            sendBankAlert.addEventListener('click', () => {
+                evidenceModal.style.display = 'none';
+                bankModal.style.display = 'flex';
+            });
+            
+            sendCyberAlert.addEventListener('click', () => {
+                evidenceModal.style.display = 'none';
+                cyberModal.style.display = 'flex';
+            });
+            
+            simulateSendBank.addEventListener('click', () => {
+                alert('Simulated: Email sent to Bank Fraud Desk');
+                bankModal.style.display = 'none';
+            });
+            
+            simulateSendCyber.addEventListener('click', () => {
+                alert('Simulated: Email sent to Cyber Crime Cell');
+                cyberModal.style.display = 'none';
+            });
+            
+            // Admin filters
+            applyFilters.addEventListener('click', updateAdminTables);
+            clearFilters.addEventListener('click', clearAdminFilters);
+            
+            // Number management
+            addNumberBtn.addEventListener('click', addUpdateNumber);
+        }
+        
+        // Switch between sections
+        function switchSection(section) {
+            sections.forEach(sec => {
+                sec.classList.remove('active-section');
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            document.getElementById(`${section}-section`).classList.add('active-section');
+            document.querySelector(`[data-section="${section}"]`).classList.add('active');
+        }
+        
+        // Verify phone number
+        function verifyNumber() {
+            const number = phoneInput.value.trim();
+            
+            if (!number || number.length < 10 || number.length > 12) {
+                alert('Please enter a valid 10-12 digit phone number');
+                return;
+            }
+            
+            const numbers = JSON.parse(localStorage.getItem('voiceSeal_numbers'));
+            
+            let resultHtml = '';
+            
+            if (numbers.verified.includes(number)) {
+                resultHtml = `
+                    <div class="result-verified">
+                        <div class="result-title">
+                            <span class="icon">✅</span> Verified Number
+                        </div>
+                        <p>This number belongs to an official Axis Bank representative.</p>
+                        <p><strong>Branch:</strong> Customer Care - Head Office</p>
+                        <p><strong>Advisory:</strong> This is an official Axis call. You can proceed with the conversation securely.</p>
+                        
+                        <div class="copy-message">
+                            I just verified a call from ${number} using Axis VoiceSeal. It's confirmed as an official Axis Bank number. #SafeBanking #AxisVoiceSeal
+                            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        </div>
+                    </div>
+                `;
+            } else if (numbers.fraud.includes(number)) {
+                resultHtml = `
+                    <div class="result-fraud">
+                        <div class="result-title">
+                            <span class="icon">🚨</span> Fraudulent Number
+                        </div>
+                        <p>This number is reported as fraudulent. Exercise extreme caution.</p>
+                        <p><strong>Summary:</strong> Multiple reports indicate this number is used for phishing attempts and fake offers.</p>
+                        
+                        <div class="copy-message">
+                            Alert! I just checked ${number} using Axis VoiceSeal and it's flagged as a fraudulent number. Beware of scam calls! #FraudAlert #AxisVoiceSeal
+                            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        </div>
+                        
+                        <p><strong>Example victim message:</strong> "I received a call from ${number} claiming to be from Axis Bank. They asked for my OTP and account details. Thankfully, I verified with VoiceSeal and avoided the scam."</p>
+                        
+                        <button class="btn btn-danger" onclick="switchSection('report')">Report Now</button>
+                    </div>
+                `;
+            } else {
+                resultHtml = `
+                    <div class="result-unknown">
+                        <div class="result-title">
+                            <span class="icon">⚠️</span> Unknown Number
+                        </div>
+                        <p>This number is not found in our official database.</p>
+                        <p>If you received a suspicious call from this number, please report it to help protect others.</p>
+                        
+                        <div class="copy-message">
+                            I checked ${number} using Axis VoiceSeal. It's not in the official database. Stay vigilant against potential scam calls! #BankingSafety #AxisVoiceSeal
+                            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        </div>
+                        
+                        <button class="btn btn-warning" onclick="switchSection('report')">Report Suspicious Call</button>
+                    </div>
+                `;
+            }
+            
+            verificationResult.innerHTML = resultHtml;
+            verificationResult.style.display = 'block';
+        }
+        
+        // Handle file upload and preview
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const previewContainer = e.target.id === 'call-recording' ? recordingPreview : screenshotPreview;
+            const fileId = Date.now().toString();
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                let previewElement;
+                
+                if (file.type.startsWith('audio/')) {
+                    previewElement = document.createElement('audio');
+                    previewElement.controls = true;
+                    previewElement.src = event.target.result;
+                } else if (file.type.startsWith('image/')) {
+                    previewElement = document.createElement('img');
+                    previewElement.src = event.target.result;
+                } else {
+                    return; // Unsupported file type
+                }
+                
+                const previewItem = document.createElement('div');
+                previewItem.className = 'preview-item';
+                previewItem.id = `preview-${fileId}`;
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-file';
+                removeBtn.innerHTML = '×';
+                removeBtn.onclick = () => {
+                    previewItem.remove();
+                    e.target.value = '';
+                };
+                
+                previewItem.appendChild(previewElement);
+                previewItem.appendChild(removeBtn);
+                previewContainer.appendChild(previewItem);
+            };
+            
+            reader.readAsDataURL(file);
+        }
+        
+        // Submit report form
+        function submitReport(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(reportForm);
+            const report = {
+                id: Date.now().toString(),
+                phone: document.getElementById('report-phone').value,
+                datetime: document.getElementById('call-datetime').value,
+                callerName: document.getElementById('caller-name').value,
+                description: document.getElementById('description').value,
+                consent: document.getElementById('consent-checkbox').checked,
+                status: 'pending',
+                timestamp: new Date().toISOString()
+            };
+            
+            // Get file previews as data URLs
+            const recordingPreview = document.querySelector('#recording-preview audio');
+            const screenshotPreview = document.querySelector('#screenshot-preview img');
+            
+            if (recordingPreview) {
+                report.recording = recordingPreview.src;
+            }
+            
+            if (screenshotPreview) {
+                report.screenshot = screenshotPreview.src;
+            }
+            
+            // Save to localStorage
+            const reports = JSON.parse(localStorage.getItem('voiceSeal_reports'));
+            reports.push(report);
+            localStorage.setItem('voiceSeal_reports', JSON.stringify(reports));
+            
+            // Update stats
+            updateStats();
+            
+            // Show evidence modal
+            currentReportId = report.id;
+            currentEvidence = report;
+            showEvidenceModal(report);
+            
+            // Reset form
+            reportForm.reset();
+            document.getElementById('recording-preview').innerHTML = '';
+            document.getElementById('screenshot-preview').innerHTML = '';
+        }
+        
+        // Show evidence modal
+        function showEvidenceModal(report) {
+            evidenceContent.innerHTML = `
+                <h4>Report Summary</h4>
+                <p><strong>Report ID:</strong> ${report.id}</p>
+                <p><strong>Phone Number:</strong> ${report.phone}</p>
+                <p><strong>Call Date & Time:</strong> ${new Date(report.datetime).toLocaleString()}</p>
+                <p><strong>Caller Name:</strong> ${report.callerName || 'Not provided'}</p>
+                <p><strong>Description:</strong> ${report.description}</p>
+                <p><strong>Consent for Sharing:</strong> ${report.consent ? 'Yes' : 'No'}</p>
+                
+                <h4 style="margin-top: 1rem;">Evidence Preview</h4>
+                <div class="file-previews">
+                    ${report.recording ? `<div class="preview-item"><audio controls src="${report.recording}"></audio></div>` : ''}
+                    ${report.screenshot ? `<div class="preview-item"><img src="${report.screenshot}" alt="Screenshot"></div>` : ''}
+                </div>
+                
+                <h4 style="margin-top: 1rem;">JSON Data</h4>
+                <pre>${JSON.stringify(report, null, 2)}</pre>
+            `;
+            
+            // Disable cyber alert if no consent
+            if (!report.consent) {
+                sendCyberAlert.disabled = true;
+                sendCyberAlert.title = 'Consent not provided for sharing with Cyber Crime Cell';
+            } else {
+                sendCyberAlert.disabled = false;
+                sendCyberAlert.title = '';
+            }
+            
+            evidenceModal.style.display = 'flex';
+        }
+        
+        // Download evidence pack
+        function downloadEvidencePack() {
+            if (!currentEvidence) return;
+            
+            const dataStr = JSON.stringify(currentEvidence, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `voiceSeal_evidence_${currentEvidence.id}.json`;
+            link.click();
+        }
+        
+        // Copy to clipboard
+        function copyToClipboard(button) {
+            const message = button.parentElement.textContent.replace('Copy', '').trim();
+            navigator.clipboard.writeText(message).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+        
+        // Update statistics
+        function updateStats() {
+            const reports = JSON.parse(localStorage.getItem('voiceSeal_reports'));
+            const numbers = JSON.parse(localStorage.getItem('voiceSeal_numbers'));
+            
+            totalReports.textContent = reports.length;
+            fraudNumbers.textContent = numbers.fraud.length;
+            verifiedNumbersCount.textContent = numbers.verified.length;
+            
+            const pendingCount = reports.filter(r => r.status === 'pending').length;
+            pendingReports.textContent = pendingCount;
+        }
+        
+        // Update admin tables
+        function updateAdminTables() {
+            updateReportsTable();
+            updateNumbersTable();
+            updateStats();
+        }
+        
+        // Update reports table
+        function updateReportsTable() {
+            const reports = JSON.parse(localStorage.getItem('voiceSeal_reports'));
+            let filteredReports = [...reports];
+            
+            // Apply filters
+            if (filterPhone.value) {
+                filteredReports = filteredReports.filter(r => 
+                    r.phone.includes(filterPhone.value)
+                );
+            }
+            
+            if (filterDateFrom.value) {
+                filteredReports = filteredReports.filter(r => 
+                    new Date(r.datetime) >= new Date(filterDateFrom.value)
+                );
+            }
+            
+            if (filterDateTo.value) {
+                filteredReports = filteredReports.filter(r => 
+                    new Date(r.datetime) <= new Date(filterDateTo.value + ' 23:59:59')
+                );
+            }
+            
+            if (filterStatus.value) {
+                filteredReports = filteredReports.filter(r => 
+                    r.status === filterStatus.value
+                );
+            }
+            
+            // Sort by timestamp (newest first)
+            filteredReports.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            // Generate table rows
+            let tableHtml = '';
+            
+            if (filteredReports.length === 0) {
+                tableHtml = `<tr><td colspan="5" style="text-align: center;">No reports found</td></tr>`;
+            } else {
+                filteredReports.forEach(report => {
+                    const statusClass = `status-${report.status.replace(' ', '-')}`;
+                    const statusText = report.status.split('-').map(word => 
+                        word.charAt(0).toUpperCase() + word.slice(1)
+                    ).join(' ');
+                    
+                    tableHtml += `
+                        <tr>
+                            <td>${report.id}</td>
+                            <td>${report.phone}</td>
+                            <td>${new Date(report.datetime).toLocaleDateString()}</td>
+                            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                            <td class="action-buttons">
+                                <button class="btn btn-outline action-btn" onclick="viewReport('${report.id}')">View</button>
+                                <select class="form-control action-btn" onchange="updateReportStatus('${report.id}', this.value)">
+                                    <option value="pending" ${report.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="under-review" ${report.status === 'under-review' ? 'selected' : ''}>Under Review</option>
+                                    <option value="reported" ${report.status === 'reported' ? 'selected' : ''}>Reported to Police</option>
+                                    <option value="resolved" ${report.status === 'resolved' ? 'selected' : ''}>Resolved</option>
+                                </select>
+                                <button class="btn btn-outline action-btn" onclick="deleteReport('${report.id}')">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            
+            reportsTableBody.innerHTML = tableHtml;
+        }
+        
+        // Update numbers table
+        function updateNumbersTable() {
+            const numbers = JSON.parse(localStorage.getItem('voiceSeal_numbers'));
+            
+            let tableHtml = '';
+            
+            numbers.verified.forEach(number => {
+                tableHtml += `
+                    <tr>
+                        <td>${number}</td>
+                        <td><span class="status-badge status-resolved">Verified</span></td>
+                        <td>
+                            <button class="btn btn-outline action-btn" onclick="removeNumber('${number}', 'verified')">Remove</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            numbers.fraud.forEach(number => {
+                tableHtml += `
+                    <tr>
+                        <td>${number}</td>
+                        <td><span class="status-badge status-pending">Fraud</span></td>
+                        <td>
+                            <button class="btn btn-outline action-btn" onclick="removeNumber('${number}', 'fraud')">Remove</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            numbersTableBody.innerHTML = tableHtml;
+        }
+        
+        // Clear admin filters
+        function clearAdminFilters() {
+            filterPhone.value = '';
+            filterDateFrom.value = '';
+            filterDateTo.value = '';
+            filterStatus.value = '';
+            updateAdminTables();
+        }
+        
+        // Add/update number
+        function addUpdateNumber() {
+            const number = newNumber.value.trim();
+            const type = document.querySelector('input[name="number-type"]:checked').value;
+            
+            if (!number || number.length < 10 || number.length > 12) {
+                alert('Please enter a valid 10-12 digit phone number');
+                return;
+            }
+            
+            const numbers = JSON.parse(localStorage.getItem('voiceSeal_numbers'));
+            
+            // Remove from other category if exists
+            const otherType = type === 'verified' ? 'fraud' : 'verified';
+            if (numbers[otherType].includes(number)) {
+                numbers[otherType] = numbers[otherType].filter(n => n !== number);
+            }
+            
+            // Add to selected category if not already there
+            if (!numbers[type].includes(number)) {
+                numbers[type].push(number);
+            }
+            
+            localStorage.setItem('voiceSeal_numbers', JSON.stringify(numbers));
+            newNumber.value = '';
+            updateAdminTables();
+        }
+        
+        // Remove number
+        function removeNumber(number, type) {
+            const numbers = JSON.parse(localStorage.getItem('voiceSeal_numbers'));
+            numbers[type] = numbers[type].filter(n => n !== number);
+            localStorage.setItem('voiceSeal_numbers', JSON.stringify(numbers));
+            updateAdminTables();
+        }
+        
+        // View report
+        function viewReport(id) {
+            const reports = JSON.parse(localStorage.getItem('voiceSeal_reports'));
+            const report = reports.find(r => r.id === id);
+            
+            if (report) {
+                currentReportId = id;
+                currentEvidence = report;
+                showEvidenceModal(report);
+            }
+        }
+        
+        // Update report status
+        function updateReportStatus(id, status) {
+            const reports = JSON.parse(localStorage.getItem('voiceSeal_reports'));
+            const report = reports.find(r => r.id === id);
+            
+            if (report) {
+                report.status = status;
+                localStorage.setItem('voiceSeal_reports', JSON.stringify(reports));
+                updateAdminTables();
+            }
+        }
+        
+        // Delete report
+        function deleteReport(id) {
+            if (confirm('Are you sure you want to delete this report?')) {
+                const reports = JSON.parse(localStorage.getItem('voiceSeal_reports'));
+                const updatedReports = reports.filter(r => r.id !== id);
+                localStorage.setItem('voiceSeal_reports', JSON.stringify(updatedReports));
+                updateAdminTables();
+            }
+        }
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
